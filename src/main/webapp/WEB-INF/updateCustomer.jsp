@@ -1,5 +1,5 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-
+<%@ page pageEncoding="UTF-8" %>
 <!doctype html>
 <%@page import="java.sql.*"%>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
@@ -46,57 +46,84 @@
 		</div>
 	</nav><br>
 	<div class="jumbotron container border border-info">
-		<h3>Update Existing Product</h3>
-		<form action="/admin/products/update/${product.id}" method="post">
+		<h3>Update Existing Customer</h3>
+		<form action="/admin/updating_customer/${detailCustomer.cusId}" method="post">
+                    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 			<div class="row">
 				<div class="col-sm-5">
 					
 					<div class="form-group">
-						<label for="name">Id</label> 
-						<input type="number" readonly="readonly" class="form-control border border-success" name="id"  value="${product.id}">
+						<label for="id">Id</label> 
+						<input type="number" readonly="readonly" class="form-control border border-success" name="id"  value="${detailCustomer.cusId}">
 						
 
 					</div>
 					<div class="form-group">
-						<label for="name">Name</label> 
-						<input type="text" class="form-control border border-success" required name="name" value="${product.name }" placeholder="Enter name">
+						<label for="firstName">First name</label> 
+						<input type="text" class="form-control border border-success" required name="firstName" value="${detailCustomer.firstName}" placeholder="Enter first name">
 					</div>
 					
-					<div class="form-group">
-					
-						<label for="category">Select Category</label> 
-						<select class="form-control border border-success" name="categoryid" readonly>
-							<option selected>Select a Category</option>
-                            							<c:forEach var="category" items="${categories}">
-                            								<option value="${category.id}">${category.name}</option>
-                            							</c:forEach>
-						</select>
+                                        <div class="form-group">
+						<label for="lastName">Last name</label> 
+						<input type="text" class="form-control border border-success" required name="lastName" value="${detailCustomer.lastName}" placeholder="Enter last name">
 					</div>
+                                        
 					<div class="form-group">
-						<label for="price">Price</label> 
-						<input type="number" class="form-control border border-success" required name="price" value="${ product.price }" min="1" placeholder="Price">
+						<label for="email">Email</label> 
+						<input type="text" class="form-control border border-success" required name="email" value="${detailCustomer.email}" placeholder="Email">
 					</div>
+                                        <div class="form-group">
+						<label for="password">Password</label> 
+						<input type="text" class="form-control border border-success"  name="password" value="${detailCustomer.password}" placeholder="Password">
+					</div>
+                                        
 					<div class="form-group">
-						<label for="weight">Weight in grams</label> 
-						<input type="number" class="form-control border border-success" required name="weight" value="${product.weight }" min="1" placeholder="Weight">
+						<label for="phoneNumber">Phone Number</label> 
+						<input type="text" class="form-control border border-success" required name="phoneNumber" value="${detailCustomer.phoneNumber}" placeholder="Phone Number">
 					</div>
-					<div class="form-group">
-						<label for="weight">Available Quantity</label> 
-						<input type="number" class="form-control border border-success" required name="quantity" value="${ product.quantity }" min="1" placeholder="Quantity">
-					</div>
+                                        <div>
+                                            <h2>Address</h2>
+                                            <div class="form-group">
+                                                    <label for="number">Number of house</label> 
+                                                    <input type="text" class="form-control border border-success" required name="number" value="${detailCustomer.number}" placeholder="Number of house">
+                                            </div>
+                                            <div class="form-group">
+                                                    <label for="street">Street</label> 
+                                                    <input type="text" class="form-control border border-success" required name="street" value="${detailCustomer.street}" placeholder="Street">
+                                            </div>
+                                            <div class="form-group">
+                                                    <label for="ward">Ward</label> 
+                                                    <input type="text" class="form-control border border-success" required name="ward" value="${detailCustomer.ward}" placeholder="Ward">
+                                            </div>
+                                            <div class="form-group">
+                                                    <label for="district">District</label> 
+                                                    <input type="text" class="form-control border border-success" required name="district" value="${detailCustomer.district}" placeholder="District">
+                                            </div>
+                                            <div class="form-group">
+                                                    <label for="province">Province</label> 
+                                                    <input type="text" class="form-control border border-success" required name="province" value="${detailCustomer.province}" placeholder="Province">
+                                            </div>
+                                            <div class="form-group">
+                                                    <label for="country">Country</label> 
+                                                    <input type="text" class="form-control border border-success" required name="country" value="${detailCustomer.country}" placeholder="Country">
+                                            </div>
+                                        </div>
+<!--					<div class="form-group">
+						<label for="image">Link Image</label> 
+						<input type="text" class="form-control border border-success" required name="image" value="${detailCustomer.image}" placeholder="Image">
+					</div>-->
 					
 					
 				</div>
 				
 				<div class="col-sm-5">
 				<div class="form-group">
-						<label for="description">Product Description</label>
-						<textarea class="form-control border border-success" rows="4" name="description" placeholder="Product Details" value= "${ pdescription }"></textarea>
+						
 					</div>
 					<p>Product Image</p>
 					<div class="custom-file">
-						<input type="file" class="custom-file-input" name="productImage" value="${ product.image }" accept="image/jpeg, image/png" id="productImage"  onchange="loadfile(event)"/>
-						<label class="custom-file-label border border-success" for="productImage">Choose file</label>
+						<input type="file" class="custom-file-input" name="image" value="${ detailCustomer.image }" accept="image/jpeg, image/png" id="image"  onchange="loadfile(event)"/>
+						<label class="custom-file-label border border-success" for="image">Choose file</label>
 						<script type="text/javascript">
 						var loadFile = function(event) {
 							var image = document.getElementById('imgPreview');

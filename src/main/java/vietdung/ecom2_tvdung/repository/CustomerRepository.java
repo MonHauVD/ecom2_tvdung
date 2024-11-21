@@ -19,5 +19,7 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
 //    void addCustomer(Customer customer);
 //    List<Customer> findAllCustomers();
     
-
+    @Transactional
+    @Query(value = "Select image From customer WHERE id = :myid", nativeQuery = true)
+    String getOldImage(@Param("myid") Long id);
 }

@@ -13,6 +13,21 @@ public class Address {
     private String province;
     private String country;
 
+    public Address(String number, String street, String ward, String district, String province, String country)
+    {
+        this.number = number;
+        this.street = street;
+        this.ward = ward;
+        this.district = district;
+        this.province = province;
+        this.country = country;
+    }
+
+    public Address()
+    {
+    }
+
+    
     // Getters and Setters
 
 

@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 import vietdung.ecom2_tvdung.model.Customer;
 
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import vietdung.ecom2_tvdung.controller.dto.CustomerRegistrationDto;
@@ -18,6 +19,7 @@ import vietdung.ecom2_tvdung.repository.AddressRepository;
 import vietdung.ecom2_tvdung.repository.CustomerRepository;
 
 @Service
+@Slf4j
 public class CustomerDAOImpl implements CustomerDAO{
     @Autowired
     private CustomerRepository customerDAO;
@@ -26,7 +28,7 @@ public class CustomerDAOImpl implements CustomerDAO{
     private UserRepository userRepository;
     
     @Autowired
-    private AddressRepository addressDAO;
+    private AddressRepository addressRepository;
     
 //    @Autowired
     private BCryptPasswordEncoder passwordEncoder;
@@ -61,7 +63,7 @@ public class CustomerDAOImpl implements CustomerDAO{
             address.setProvince(registrationDto.getProvince());
             address.setDistrict(registrationDto.getDistrict());
             address.setCountry(registrationDto.getCountry());
-            addressDAO.save(address);
+            addressRepository.save(address);
             
             Customer customer = new Customer();
             customer.setUser(user);
@@ -77,6 +79,40 @@ public class CustomerDAOImpl implements CustomerDAO{
         } catch (Exception e)
         {
             System.out.println("Loi CustomerDAOImpl.save" + e);
+        }
+        return  null;
+    }
+    
+    public Customer save(User user, Address address, Customer customer) {
+        try
+        {
+            Long user_id = userRepository.getUserIdByCustomerID(customer.getId());
+            Role user_role = userRepository.getRoleByUserId(user_id);
+            user.setId(user_id);
+            user.setRole(user_role);
+            
+            String newPassword = user.getPassword();
+            if (newPassword.length() == 0)
+            {
+                user.setPassword(userRepository.getOldPassword(user_id));
+            }
+            userRepository.save(user);
+            
+            Long address_id = addressRepository.getAddressIdByCustomerID(customer.getId());
+            address.setId(address_id);
+            addressRepository.save(address);
+            
+            customer.setUser(user);
+            customer.setAddress(address);
+            if(customer.getImage().length() == 0)
+            {
+                customer.setImage(customerDAO.getOldImage(customer.getId()));
+            }
+            
+            return customerDAO.save(customer);
+        } catch (Exception e)
+        {
+            System.out.println("Loi CustomerDAOImpl.save " + e);
         }
         return  null;
     }

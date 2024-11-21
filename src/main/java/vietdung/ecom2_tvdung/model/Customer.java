@@ -20,6 +20,21 @@ public class Customer {
     private String phoneNumber;
     private String image;
 
+    public Customer()
+    {
+    }
+
+    public Customer(Long id, String phoneNumber, String image)
+    {
+        this.id = id;
+        this.phoneNumber = phoneNumber;
+        this.image = image;
+    }
+
+   
+
+    
+    
     // Getters and Setters
 
     public Long getId() {

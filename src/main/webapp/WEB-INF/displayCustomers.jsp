@@ -84,8 +84,14 @@
 						
 					</td>
 					<td>
-					    ${customer.address}
+					    ${customer.strAddress}
 						
+                                        </td>
+                                        <td>
+                                            <a class="nav-link" href="delete_customer/${customer.cusId}" >Delete</a>
+                                        </td>
+                                        <td>
+                                            <a class="nav-link" href="update_customer/${customer.cusId}" >Update</a>
                                         </td>
 					</tr>
                 </c:forEach>

@@ -141,7 +141,7 @@ public class UserServiceImpl //implements UserService
         return user;
     }
 
-    public String getRolesByEmailUser(String email)
+    public Role getRolesByEmailUser(String email)
     {
         return userRepository.getRoleByEmail(email);
     }

@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+import vietdung.ecom2_tvdung.model.Role;
 import vietdung.ecom2_tvdung.model.User;
 
 @Repository
@@ -21,8 +22,25 @@ public interface UserRepository extends JpaRepository<User, Long>{
 	void setNewPassword(@Param("myemail") String email, @Param("mypassword") String password);
         
         @Transactional
+	@Query(value = "Select password From user WHERE id = :myid", nativeQuery = true)
+	String getOldPassword(@Param("myid") Long id);
+        
+        
+        @Transactional
 	@Query(value = "SELECT role \n" +
-                        "FROM users \n" +
+                        "FROM user \n" +
                         "WHERE email = :myemail", nativeQuery = true)
-	String getRoleByEmail(@Param("myemail")String email);
+	Role getRoleByEmail(@Param("myemail")String email);
+        
+        @Transactional
+	@Query(value = "SELECT role \n" +
+                        "FROM user \n" +
+                        "WHERE id = :myid", nativeQuery = true)
+	Role getRoleByUserId(@Param("myid")Long id);
+        
+        
+        @Transactional
+	@Query(value = "SELECT user_id from customer \n" +
+                        "WHERE id = :myCusId", nativeQuery = true)
+	Long getUserIdByCustomerID(@Param("myCusId")Long myCusId);
 }
