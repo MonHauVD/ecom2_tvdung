@@ -31,6 +31,14 @@ public class Customer {
         this.image = image;
     }
 
+    public Customer(User user, Address address, String phoneNumber, String image)
+    {
+        this.user = user;
+        this.address = address;
+        this.phoneNumber = phoneNumber;
+        this.image = image;
+    }
+
    
 
     
@@ -76,4 +84,12 @@ public class Customer {
     public void setImage(String image) {
         this.image = image;
     }
+
+    @Override
+    public String toString()
+    {
+        return "Customer{" + "id=" + id + ", user=" + user + ", address=" + address + ", phoneNumber=" + phoneNumber + ", image=" + image + '}';
+    }
+    
+    
 }

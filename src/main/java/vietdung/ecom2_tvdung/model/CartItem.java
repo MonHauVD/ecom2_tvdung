@@ -8,6 +8,7 @@ package vietdung.ecom2_tvdung.model;
  *
  * @author TranVietDung
  */
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import javax.persistence.*;
 
 @Entity
@@ -16,8 +17,10 @@ public class CartItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+//    @ManyToOne(fetch = FetchType.LAZY)
     @ManyToOne
     @JoinColumn(name = "cart_id")
+//    @JsonBackReference
     private Cart cart;
 
     @ManyToOne
@@ -26,6 +29,29 @@ public class CartItem {
 
     private Integer quantity;
 
+    public CartItem()
+    {
+    }
+
+    public CartItem(Cart cart, Item item)
+    {
+        this.cart = cart;
+        this.item = item;
+        this.quantity = 1;
+    }
+
+    
+    
+    public CartItem(Cart cart, Item item, Integer quantity)
+    {
+        this.cart = cart;
+        this.item = item;
+        this.quantity = quantity;
+    }
+
+    
+    
+    
     public Long getId()
     {
         return id;
@@ -64,6 +90,12 @@ public class CartItem {
     public void setQuantity(Integer quantity)
     {
         this.quantity = quantity;
+    }
+
+    @Override
+    public String toString()
+    {
+        return "CartItem{" + "id=" + id + ", cartid=" + cart.getId() + ", item=" + item + ", quantity=" + quantity + '}';
     }
 
     

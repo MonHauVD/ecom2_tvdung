@@ -7,8 +7,8 @@ import java.util.List;
 import org.springframework.stereotype.Repository;
 @Repository
 public interface ShipmentRepository extends JpaRepository<Shipment, Long> {
-    List<Shipment> findAllByOrderId(long orderId);
-    List<Shipment> findAllByMethod(String method);
-    List<Shipment> findAllByStatus(String status);
+//    List<Shipment> findAllByOrderId(long orderId);
+//    List<Shipment> findAllByMethod(String method);
+//    List<Shipment> findAllByStatus(String status);
     Shipment findShipmentById(long id);
 }

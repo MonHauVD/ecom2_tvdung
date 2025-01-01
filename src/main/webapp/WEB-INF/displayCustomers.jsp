@@ -17,13 +17,13 @@
 	integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
 	crossorigin="anonymous">
 
-<title>Document</title>
+<title>Customer</title>
 </head>
 <body class="bg-light">
 	<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
 		<div class="container-fluid">
 			<a class="navbar-brand" href="#"> <img
-				th:src="@{/images/logo.png}" src="../static/images/logo.png"
+				th:src="@{../images/logo.png}" src="/images/logo.png"
 				width="auto" height="40" class="d-inline-block align-top" alt="" />
 			</a>
 			<button class="navbar-toggler" type="button" data-toggle="collapse"
@@ -38,7 +38,8 @@
 				<ul class="navbar-nav">
 					<li class="nav-item active"><a class="nav-link" href="Dashboard">Home
 							Page</a></li>
-					<li class="nav-item active"><form th:action="@{/admin/logout}" method="post">
+					<li class="nav-item active"><form action="/admin/logout" method="post">
+                                                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                                                 <input type="submit" value="Logout" />
                                             </form>
 					</li>
@@ -50,7 +51,7 @@
 	</nav><br>
 	<div class="container-fluid">
 
-		
+		<h3 class="text-center text-danger mt-3">${msg}</h3>
 		<table class="table">
 
 			<tr>

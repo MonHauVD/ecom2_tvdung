@@ -3,7 +3,7 @@ package vietdung.ecom2_tvdung.model;
 //import jakarta.persistence.*;
 import javax.persistence.*;
 @Entity
-@DiscriminatorValue("Laptop")
+//@DiscriminatorValue("Laptop")
 public class Laptop{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -13,7 +13,59 @@ public class Laptop{
     private int storage;
     private double screenSize;
     private String operatingSystem;
+    @OneToOne
+    @JoinColumn(name = "item_id", referencedColumnName = "id")
+    private Item item;
 
+    public Laptop()
+    {
+    }
+
+    public Laptop(Long id, String processor, int ram, int storage, double screenSize, String operatingSystem, Item item)
+    {
+        this.id = id;
+        this.processor = processor;
+        this.ram = ram;
+        this.storage = storage;
+        this.screenSize = screenSize;
+        this.operatingSystem = operatingSystem;
+        this.item = item;
+    }
+
+    public Laptop(String processor, int ram, int storage, double screenSize, String operatingSystem, Item item)
+    {
+        this.processor = processor;
+        this.ram = ram;
+        this.storage = storage;
+        this.screenSize = screenSize;
+        this.operatingSystem = operatingSystem;
+        this.item = item;
+    }
+
+    public Laptop(String processor, int ram, int storage, double screenSize, String operatingSystem)
+    {
+        this.processor = processor;
+        this.ram = ram;
+        this.storage = storage;
+        this.screenSize = screenSize;
+        this.operatingSystem = operatingSystem;
+    }
+
+    
+    
+    public Item getItem()
+    {
+        return item;
+    }
+
+    public void setItem(Item item)
+    {
+        this.item = item;
+    }
+    
+    
+    
+    
     // Getters and Setters
 
     public Long getId() {

@@ -39,6 +39,7 @@ public class CustomerDAOImpl implements CustomerDAO{
     }
 
 
+    @Override
     public List<Customer> findAll() {
         return customerDAO.findAll();
     }
@@ -46,6 +47,7 @@ public class CustomerDAOImpl implements CustomerDAO{
 //    public Customer findByName(Fullname name) {return customerDAO.findByFullname(name);};
 
     
+    @Override
     public Customer save(CustomerRegistrationDto registrationDto) {
         try
         {
@@ -83,6 +85,7 @@ public class CustomerDAOImpl implements CustomerDAO{
         return  null;
     }
     
+    @Override
     public Customer save(User user, Address address, Customer customer) {
         try
         {
@@ -117,7 +120,9 @@ public class CustomerDAOImpl implements CustomerDAO{
         return  null;
     }
 
+    @Override
     public void update(Customer customer) {customerDAO.save(customer);};
+    @Override
     public void delete(Customer customer) {customerDAO.deleteCustomerById(customer.getId());};
     
 

@@ -1,6 +1,7 @@
 package vietdung.ecom2_tvdung.model;
 
 //import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import javax.persistence.*;
 import java.util.List;
 
@@ -14,11 +15,30 @@ public class Cart {
     @JoinColumn(name = "customer_id", nullable = false)
     private Customer customer;
     
+//    @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+//    @JsonManagedReference
     @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL)
+//    @JsonManagedReference
     private List<CartItem> cartItems;
 
     private double totalPrice;
+    private boolean isCurrentCart;
 
+    public Cart()
+    {
+    }
+    
+    
+
+    public Cart(Customer customer)
+    {
+        this.customer = customer;
+        isCurrentCart = true;
+    }
+
+    
+    
+    
     public Long getId()
     {
         return id;
@@ -59,10 +79,23 @@ public class Cart {
         this.totalPrice = totalPrice;
     }
 
-    public void calculateTotalCost() {
-        this.totalPrice = cartItems.stream()
-            .mapToDouble(item -> item.getItem().getPrice() * item.getQuantity())
-            .sum();
+    public boolean isIsCurrentCart()
+    {
+        return isCurrentCart;
     }
+
+    public void setIsCurrentCart(boolean isCurrentCart)
+    {
+        this.isCurrentCart = isCurrentCart;
+    }
+
+    @Override
+    public String toString()
+    {
+        return "Cart{" + "id=" + id + ", customer=" + customer + ", cartItems=" + cartItems + ", totalPrice=" + totalPrice + ", isCurrentCart=" + isCurrentCart + '}';
+    }
+
+    
+    
     
 }

@@ -4,7 +4,11 @@
  */
 package vietdung.ecom2_tvdung.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import vietdung.ecom2_tvdung.model.Book;
 /**
  *
@@ -12,6 +16,9 @@ import vietdung.ecom2_tvdung.model.Book;
  */
 @Repository
 public interface BookRepository extends JpaRepository<Book, Long> {
-    
-    // Custom queries for Book if needed
+        
+    @Transactional
+    @Query(value = "SELECT * FROM book\n" +
+                "WHERE book.item_id = :myItemId", nativeQuery = true)
+    Book getBookByItemID(@Param("myItemId") Long itemId);
 }

@@ -140,6 +140,12 @@ public class UserServiceImpl //implements UserService
         User user = userRepository.findByEmail(username);
         return user;
     }
+    
+    public User getUserByEmail(String email)
+    {
+        User user = userRepository.findByEmail(email);
+        return user;
+    }
 
     public Role getRolesByEmailUser(String email)
     {
@@ -180,4 +186,10 @@ public class UserServiceImpl //implements UserService
             return true;
     }
 
+    public Long getUserIdByCustomerID(Long customerId)
+    {
+        return userRepository.getUserIdByCustomerID(customerId);  
+    }
+    
+    
 }

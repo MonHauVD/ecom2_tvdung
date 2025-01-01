@@ -3,7 +3,7 @@ package vietdung.ecom2_tvdung.model;
 //import jakarta.persistence.*;
 import javax.persistence.*;
 @Entity
-@DiscriminatorValue("Clothes")
+//@DiscriminatorValue("Clothes")
 public class Clothes{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -12,7 +12,43 @@ public class Clothes{
     private String color;
     private String material;
     private String gender;
+    @OneToOne
+    @JoinColumn(name = "item_id", referencedColumnName = "id")
+    private Item item;
 
+    public Clothes()
+    {
+    }
+
+    public Clothes(String size, String color, String material, String gender)
+    {
+        this.size = size;
+        this.color = color;
+        this.material = material;
+        this.gender = gender;
+    }
+
+    public Clothes(String size, String color, String material, String gender, Item item)
+    {
+        this.size = size;
+        this.color = color;
+        this.material = material;
+        this.gender = gender;
+        this.item = item;
+    }
+
+    public Clothes(Long id, String size, String color, String material, String gender, Item item)
+    {
+        this.id = id;
+        this.size = size;
+        this.color = color;
+        this.material = material;
+        this.gender = gender;
+        this.item = item;
+    }
+    
+    
+    
     public Long getId() {
         return id;
     }
@@ -52,4 +88,21 @@ public class Clothes{
     public void setGender(String gender) {
         this.gender = gender;
     }
+
+    public Item getItem()
+    {
+        return item;
+    }
+
+    public void setItem(Item item)
+    {
+        this.item = item;
+    }
+
+    @Override
+    public String toString()
+    {
+        return "Clothes{" + "id=" + id + ", size=" + size + ", color=" + color + ", material=" + material + ", gender=" + gender + '}';
+    }
+    
 }

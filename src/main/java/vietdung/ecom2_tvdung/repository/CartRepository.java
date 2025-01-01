@@ -10,10 +10,14 @@ import vietdung.ecom2_tvdung.model.Customer;
 
 import java.util.List;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 public interface CartRepository extends JpaRepository<Cart, Long> {
-
-    @Query("SELECT c FROM Cart c WHERE c.customer.id = :customerId")
-    Optional<Cart> findByCustomerId(@Param("customerId") Long customerId);
+    
+    @Transactional
+    @Query(value = "SELECT c.* FROM Cart c WHERE c.customer_id = :myCustomerId and c.is_current_cart = TRUE", nativeQuery = true)
+    Cart findCurrentCartByCustomerId(@Param("myCustomerId") Long customerId);
+    
+  
 }

@@ -4,18 +4,50 @@ package vietdung.ecom2_tvdung.model;
 //import jakarta.persistence.*;
 import javax.persistence.*;
 @Entity
-@DiscriminatorValue("Book")
-public class Book extends Item {
+//@DiscriminatorValue("Book")
+public class Book{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String title;
     private String author;
-    private String publisher;
     private String isbn;
     private Integer numberPage;
-    private Long idItem;
+    
+    @OneToOne
+    @JoinColumn(name = "item_id", referencedColumnName = "id")
+    private Item item;
 
+    public Book()
+    {
+    }
+
+    public Book(String author, String isbn, Integer numberPage)
+    {
+        this.author = author;
+        this.isbn = isbn;
+        this.numberPage = numberPage;
+    }
+
+    public Book(String author, String isbn, Integer numberPage, Item item)
+    {
+        this.author = author;
+        this.isbn = isbn;
+        this.numberPage = numberPage;
+        this.item = item;
+    }
+
+    
+    public Book(Long id, String author, String isbn, Integer numberPage, Item item)
+    {
+        this.id = id;
+        this.author = author;
+        this.isbn = isbn;
+        this.numberPage = numberPage;
+        this.item = item;
+    }
+
+    
+    
     public Long getId() {
         return id;
     }
@@ -24,13 +56,7 @@ public class Book extends Item {
         this.id = id;
     }
 
-    public String getTitle() {
-        return title;
-    }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
 
     public String getAuthor() {
         return author;
@@ -38,14 +64,6 @@ public class Book extends Item {
 
     public void setAuthor(String author) {
         this.author = author;
-    }
-
-    public String getPublisher() {
-        return publisher;
-    }
-
-    public void setPublisher(String publisher) {
-        this.publisher = publisher;
     }
 
     public String getIsbn() {
@@ -66,17 +84,24 @@ public class Book extends Item {
         this.numberPage = numberPage;
     }
 
-   
-
-    public Long getIdItem()
+    public Item getItem()
     {
-        return idItem;
+        return item;
     }
 
-    public void setIdItem(Long idItem)
+    public void setItem(Item item)
     {
-        this.idItem = idItem;
+        this.item = item;
     }
+
+    @Override
+    public String toString()
+    {
+        return "Book{" + "id=" + id + ", author=" + author + ", isbn=" + isbn + ", numberPage=" + numberPage + ", item=" + item + '}';
+    }
+
+
+    
     
     
 }

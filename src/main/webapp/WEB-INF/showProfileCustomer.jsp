@@ -16,9 +16,40 @@
 	href="https://use.fontawesome.com/releases/v5.7.0/css/all.css"
 	integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ"
 	crossorigin="anonymous">
-<title>Document</title>
+<style>
+        .button-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh; /* Full viewport height for centering */
+        }
+
+        .button-container button {
+            margin: 0 10px; /* Space between buttons */
+            padding: 10px 20px;
+            font-size: 16px;
+            font-weight: bold;
+            color: white;
+            background-color: #007bff; /* Bootstrap primary blue */
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .button-container button:hover {
+            background-color: #0056b3; /* Darker blue on hover */
+        }
+    </style>
+    
+<title>Customer Update</title>
 </head>
 <body>
+    <div class="button-container">
+        <button onclick="window.location.href='/update_profile';">Update Profile</button>
+        <button onclick="window.location.href='/change_password';">Change Password</button>
+    </div>
+    
 	<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
 		<div class="container-fluid">
 			<a class="navbar-brand" href="#"> <img
@@ -37,7 +68,8 @@
 				<ul class="navbar-nav">
 					<li class="nav-item active"><a class="nav-link"
 						href="/dashboard" >Home Page</a></li>
-					<li class="nav-item active"><form th:action="@{/admin/logout}" method="post">
+					<li class="nav-item active"><form action="/admin/logout" method="post">
+                                                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                                                 <input type="submit" value="Logout" />
                                             </form></li>
 				</ul>
@@ -46,7 +78,9 @@
 		</div>
 	</nav><br>
 	<div class="jumbotron container border border-info">
-		<h3>Update Existing Customer</h3>
+		<h3>Profile Customer</h3>
+                
+                
 		<form action="/admin/updating_customer/${detailCustomer.cusId}" method="post">
                     <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 			<div class="row">
@@ -60,52 +94,52 @@
 					</div>
 					<div class="form-group">
 						<label for="firstName">First name</label> 
-						<input type="text" class="form-control border border-success" required name="firstName" value="${detailCustomer.firstName}" placeholder="Enter first name">
+						<input type="text" readonly="readonly" class="form-control border border-success" required name="firstName" value="${detailCustomer.firstName}" placeholder="Enter first name">
 					</div>
 					
                                         <div class="form-group">
 						<label for="lastName">Last name</label> 
-						<input type="text" class="form-control border border-success" required name="lastName" value="${detailCustomer.lastName}" placeholder="Enter last name">
+						<input type="text" readonly="readonly" class="form-control border border-success" required name="lastName" value="${detailCustomer.lastName}" placeholder="Enter last name">
 					</div>
                                         
 					<div class="form-group">
 						<label for="email">Email</label> 
-						<input type="text" class="form-control border border-success" required name="email" value="${detailCustomer.email}" placeholder="Email">
+						<input type="text" readonly="readonly" class="form-control border border-success" required name="email" value="${detailCustomer.email}" placeholder="Email">
 					</div>
                                         <div class="form-group">
 						<label for="password">Password</label> 
-						<input type="text" class="form-control border border-success"  name="password" value="${detailCustomer.password}" placeholder="Password">
+						<input type="text" readonly="readonly" class="form-control border border-success"  name="password" value="${detailCustomer.password}" placeholder="Password">
 					</div>
                                         
 					<div class="form-group">
 						<label for="phoneNumber">Phone Number</label> 
-						<input type="text" class="form-control border border-success" required name="phoneNumber" value="${detailCustomer.phoneNumber}" placeholder="Phone Number">
+						<input type="text" readonly="readonly" class="form-control border border-success" required name="phoneNumber" value="${detailCustomer.phoneNumber}" placeholder="Phone Number">
 					</div>
                                         <div>
                                             <h2>Address</h2>
                                             <div class="form-group">
                                                     <label for="number">Number of house</label> 
-                                                    <input type="text" class="form-control border border-success" required name="number" value="${detailCustomer.number}" placeholder="Number of house">
+                                                    <input type="text" readonly="readonly" class="form-control border border-success" required name="number" value="${detailCustomer.number}" placeholder="Number of house">
                                             </div>
                                             <div class="form-group">
                                                     <label for="street">Street</label> 
-                                                    <input type="text" class="form-control border border-success" required name="street" value="${detailCustomer.street}" placeholder="Street">
+                                                    <input type="text" readonly="readonly" class="form-control border border-success" required name="street" value="${detailCustomer.street}" placeholder="Street">
                                             </div>
                                             <div class="form-group">
                                                     <label for="ward">Ward</label> 
-                                                    <input type="text" class="form-control border border-success" required name="ward" value="${detailCustomer.ward}" placeholder="Ward">
+                                                    <input type="text" readonly="readonly" class="form-control border border-success" required name="ward" value="${detailCustomer.ward}" placeholder="Ward">
                                             </div>
                                             <div class="form-group">
                                                     <label for="district">District</label> 
-                                                    <input type="text" class="form-control border border-success" required name="district" value="${detailCustomer.district}" placeholder="District">
+                                                    <input type="text" readonly="readonly" class="form-control border border-success" required name="district" value="${detailCustomer.district}" placeholder="District">
                                             </div>
                                             <div class="form-group">
                                                     <label for="province">Province</label> 
-                                                    <input type="text" class="form-control border border-success" required name="province" value="${detailCustomer.province}" placeholder="Province">
+                                                    <input type="text" readonly="readonly" class="form-control border border-success" required name="province" value="${detailCustomer.province}" placeholder="Province">
                                             </div>
                                             <div class="form-group">
                                                     <label for="country">Country</label> 
-                                                    <input type="text" class="form-control border border-success" required name="country" value="${detailCustomer.country}" placeholder="Country">
+                                                    <input type="text" readonly="readonly" class="form-control border border-success" required name="country" value="${detailCustomer.country}" placeholder="Country">
                                             </div>
                                         </div>
 <!--					<div class="form-group">
@@ -121,22 +155,12 @@
 						
 					</div>
 					<p>Product Image</p>
-					<div class="custom-file">
-						<input type="file" class="custom-file-input" name="image" value="${ detailCustomer.image }" accept="image/jpeg, image/png" id="image"  onchange="loadfile(event)"/>
-						<label class="custom-file-label border border-success" for="image">Choose file</label>
-						<script type="text/javascript">
-						var loadFile = function(event) {
-							var image = document.getElementById('imgPreview');
-							image.src = URL.createObjectURL(event.target.files[0]);
-						};
-						</script>
-					</div>
 					<div class="form-group">
 						<img src="#" id="imgPreview" height="100px" width="100px"
 							style="margin-top: 20px" alt=" ">
 					</div>
 					<input type="hidden" name="imgName">
-					<input type="submit" value="Update Details" class="btn btn-primary">
+					
 				</div>
 			</div>
 		</form>

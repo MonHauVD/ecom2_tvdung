@@ -16,7 +16,7 @@
 	href="https://use.fontawesome.com/releases/v5.7.0/css/all.css"
 	integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ"
 	crossorigin="anonymous">
-<title>Document</title>
+<title>Customer Update</title>
 </head>
 <body>
 	<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -37,7 +37,8 @@
 				<ul class="navbar-nav">
 					<li class="nav-item active"><a class="nav-link"
 						href="/dashboard" >Home Page</a></li>
-					<li class="nav-item active"><form th:action="@{/admin/logout}" method="post">
+					<li class="nav-item active"><form action="/admin/logout" method="post">
+                                                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                                                 <input type="submit" value="Logout" />
                                             </form></li>
 				</ul>
@@ -47,7 +48,7 @@
 	</nav><br>
 	<div class="jumbotron container border border-info">
 		<h3>Update Existing Customer</h3>
-		<form action="/admin/updating_customer/${detailCustomer.cusId}" method="post">
+		<form action="/updating_customer/${detailCustomer.cusId}" method="post">
                     <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 			<div class="row">
 				<div class="col-sm-5">

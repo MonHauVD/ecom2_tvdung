@@ -10,7 +10,7 @@ import vietdung.ecom2_tvdung.controller.dto.ChangePasswordDto;
 import vietdung.ecom2_tvdung.service.UserService;
 
 @Controller
-@RequestMapping("/changePassword")
+@RequestMapping("/change_password")
 public class ChangePasswordController {
     private UserService userService;
 

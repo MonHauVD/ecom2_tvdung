@@ -15,6 +15,8 @@ public interface UserRepository extends JpaRepository<User, Long>{
 	@Transactional
 	@Query(value = "Select * From user Where email = :myemail", nativeQuery = true)
 	User findByEmail(@Param("myemail")String email);
+        
+        void deleteUserById(Long id);
 
 	@Transactional
 	@Modifying // It means it's not a select statement
@@ -43,4 +45,15 @@ public interface UserRepository extends JpaRepository<User, Long>{
 	@Query(value = "SELECT user_id from customer \n" +
                         "WHERE id = :myCusId", nativeQuery = true)
 	Long getUserIdByCustomerID(@Param("myCusId")Long myCusId);
+        
+        @Transactional
+        @Query(value = "SELECT CASE WHEN COUNT(*) > 0 THEN 1 ELSE 0 END FROM user WHERE email = :myemail", nativeQuery = true)
+        int countByEmail(@Param("myemail") String email);
+        
+        @Transactional
+        @Query(value = "SELECT u.*\n" +
+                        "FROM user u\n" +
+                        "JOIN customer c ON u.id = c.user_id\n" +
+                        "WHERE c.id = :customerId;", nativeQuery = true)
+        User getUserByCustomerId(@Param("customerId") Long customerId);
 }

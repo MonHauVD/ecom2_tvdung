@@ -3,17 +3,55 @@ package vietdung.ecom2_tvdung.model;
 //import jakarta.persistence.*;
 import javax.persistence.*;
 @Entity
-@DiscriminatorValue("Electronic")
+//@DiscriminatorValue("Electronic")
 public class Electronic {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String processor;
-    private int ram;
-    private int storageCapacity;
-    private double screenSize;
-    private String operatingSystem;
+    private String model;
+    private String typeOfMachine;
+    private Double weight;
+    private String dimensions;
+    
+    
+    @OneToOne
+    @JoinColumn(name = "item_id", referencedColumnName = "id")
+    private Item item;
 
+    public Electronic()
+    {
+    }
+
+    public Electronic(Long id, String model, String typeOfMachine, Double weight, String dimensions, Item item)
+    {
+        this.id = id;
+        this.model = model;
+        this.typeOfMachine = typeOfMachine;
+        this.weight = weight;
+        this.dimensions = dimensions;
+        this.item = item;
+    }
+
+    public Electronic(String model, String typeOfMachine, Double weight, String dimensions, Item item)
+    {
+        this.model = model;
+        this.typeOfMachine = typeOfMachine;
+        this.weight = weight;
+        this.dimensions = dimensions;
+        this.item = item;
+    }
+
+    public Electronic(String model, String typeOfMachine, Double weight, String dimensions)
+    {
+        this.model = model;
+        this.typeOfMachine = typeOfMachine;
+        this.weight = weight;
+        this.dimensions = dimensions;
+    }
+    
+    
+    
+    
     public Long getId() {
         return id;
     }
@@ -22,43 +60,55 @@ public class Electronic {
         this.id = id;
     }
 
-    public String getProcessor() {
-        return processor;
+    public String getModel()
+    {
+        return model;
     }
 
-    public void setProcessor(String processor) {
-        this.processor = processor;
+    public void setModel(String model)
+    {
+        this.model = model;
     }
 
-    public int getRam() {
-        return ram;
+    public String getTypeOfMachine()
+    {
+        return typeOfMachine;
     }
 
-    public void setRam(int ram) {
-        this.ram = ram;
+    public void setTypeOfMachine(String typeOfMachine)
+    {
+        this.typeOfMachine = typeOfMachine;
     }
 
-    public int getStorageCapacity() {
-        return storageCapacity;
+    public Item getItem()
+    {
+        return item;
     }
 
-    public void setStorageCapacity(int storageCapacity) {
-        this.storageCapacity = storageCapacity;
+    public void setItem(Item item)
+    {
+        this.item = item;
     }
 
-    public double getScreenSize() {
-        return screenSize;
+    public Double getWeight()
+    {
+        return weight;
     }
 
-    public void setScreenSize(double screenSize) {
-        this.screenSize = screenSize;
+    public void setWeight(Double weight)
+    {
+        this.weight = weight;
     }
 
-    public String getOperatingSystem() {
-        return operatingSystem;
+    public String getDimensions()
+    {
+        return dimensions;
     }
 
-    public void setOperatingSystem(String operatingSystem) {
-        this.operatingSystem = operatingSystem;
+    public void setDimensions(String dimensions)
+    {
+        this.dimensions = dimensions;
     }
+
+   
 }

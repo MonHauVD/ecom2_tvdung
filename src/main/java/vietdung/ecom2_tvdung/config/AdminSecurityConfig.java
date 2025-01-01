@@ -59,7 +59,9 @@ public class AdminSecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests().antMatchers("/", "/images/**").permitAll();
  
         http.antMatcher("/admin/**")
-            .authorizeRequests().anyRequest().hasAuthority("ADMIN")
+            .authorizeRequests()
+            .antMatchers("/orderlist/**", "/detail_order/**", "/detail_order").permitAll()
+            .anyRequest().hasAuthority("ADMIN")
             .and()
             .formLogin()
                 .loginPage("/admin/login")

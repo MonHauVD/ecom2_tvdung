@@ -7,10 +7,11 @@ import vietdung.ecom2_tvdung.model.Shipment;
 import vietdung.ecom2_tvdung.repository.ShipmentRepository;
 
 @Service
-public class ShipmentDAOImpl {
+public class ShipmentDAOImpl implements ShipmentDAO{
     @Autowired
     private ShipmentRepository shipmentDAO;
 
+    @Override
     public Shipment getShipmentById(Long id) {
         return shipmentDAO.findShipmentById(id);
     }

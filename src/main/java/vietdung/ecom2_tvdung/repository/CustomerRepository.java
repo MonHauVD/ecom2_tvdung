@@ -22,4 +22,14 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
     @Transactional
     @Query(value = "Select image From customer WHERE id = :myid", nativeQuery = true)
     String getOldImage(@Param("myid") Long id);
+    
+    
+    
+    @Transactional
+    @Query(value = "SELECT c.*\n" +
+                    "FROM customer c\n" +
+                    "JOIN user u ON c.user_id = u.id\n" +
+                    "WHERE u.id = :userId", nativeQuery = true)
+    Customer getCustomerByUserId(@Param("userId")Long userID);
+    
 }

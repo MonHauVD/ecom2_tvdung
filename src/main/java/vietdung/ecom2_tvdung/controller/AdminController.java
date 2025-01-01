@@ -25,13 +25,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
-import vietdung.ecom2_tvdung.model.Address;
-import vietdung.ecom2_tvdung.model.Customer;
-import vietdung.ecom2_tvdung.model.DetailCustomer;
-import vietdung.ecom2_tvdung.model.User;
-import vietdung.ecom2_tvdung.service.CustomerDAOImpl;
-import vietdung.ecom2_tvdung.service.ItemDAOImpl;
-import vietdung.ecom2_tvdung.service.UserServiceImpl;
+import vietdung.ecom2_tvdung.controller.dto.*;
+import vietdung.ecom2_tvdung.model.*;
+import vietdung.ecom2_tvdung.repository.UserRepository;
+import vietdung.ecom2_tvdung.service.*;
 
 //import com.jtspringproject.JtSpringProject.models.Category;
 //import com.jtspringproject.JtSpringProject.models.Product;
@@ -45,18 +42,34 @@ import vietdung.ecom2_tvdung.service.UserServiceImpl;
 public class AdminController
 {
 
-    private final UserServiceImpl userService;
     private final CustomerDAOImpl customerService;
-//        private final ItemDAOImpl itemService;
-//	private final categoryService categoryService;
-//	private final productService productService;
+    private final BookDAOImpl bookService;
+    private final ClothesDAOImpl clothesService;
+    private final ElectronicDAOImpl electronicService;
+    private final LaptopDAOImpl laptopService;
+    private final MobilePhoneDAOImpl mobilePhoneService;
+    private final ShoesDAOImpl shoesService;
+    private final ItemDAOImpl itemService;
+    private final UserServiceImpl userService;
+    private final CartDAOImpl cartService;
+    private final OrderDAOImpl orderService;
+    private final ReviewDAOImpl reviewService;
 
     @Autowired
-    public AdminController(UserServiceImpl _userService, ItemDAOImpl _itemService, CustomerDAOImpl _customerService)
+    public AdminController(CustomerDAOImpl customerService, BookDAOImpl bookService, ClothesDAOImpl clothesService, ElectronicDAOImpl electronicService, LaptopDAOImpl laptopService, MobilePhoneDAOImpl mobilePhoneService, ShoesDAOImpl shoesService, ItemDAOImpl itemService, UserServiceImpl userService, CartDAOImpl cartService, OrderDAOImpl orderService, ReviewDAOImpl reviewService)
     {
-        this.userService = _userService;
-//                this.itemService = _itemService;
-        this.customerService = _customerService;
+        this.customerService = customerService;
+        this.bookService = bookService;
+        this.clothesService = clothesService;
+        this.electronicService = electronicService;
+        this.laptopService = laptopService;
+        this.mobilePhoneService = mobilePhoneService;
+        this.shoesService = shoesService;
+        this.itemService = itemService;
+        this.userService = userService;
+        this.cartService = cartService;
+        this.orderService = orderService;
+        this.reviewService = reviewService;
     }
 
     @GetMapping("/index")
@@ -66,6 +79,10 @@ public class AdminController
         model.addAttribute("username", username);
         return "index";
     }
+
+    
+
+    
 
 //	@GetMapping("login")
 //	public ModelAndView adminlogin(@RequestParam(required = false) String error) {
@@ -96,6 +113,11 @@ public class AdminController
     {
         return "thymeleaf/adminHome";
     }
+    
+//    @PostMapping("/logout")
+//    public String logout() {
+//        return "redirect:/login"; // Chuyển hướng đến trang đăng nhập
+//    }
 
 //	@GetMapping("categories")
 //	public ModelAndView getcategory() {
@@ -225,7 +247,7 @@ public class AdminController
             PreparedStatement stmt = con.prepareStatement(query);
 
             ResultSet rst = stmt.executeQuery();
-            List<DetailCustomer> ls = new ArrayList<>();
+            List<DetailCustomerDto> ls = new ArrayList<>();
             while (rst.next())
             {
                 long cusid = rst.getInt(1);
@@ -245,11 +267,14 @@ public class AdminController
                 String province = rst.getString(11);
                 String country = rst.getString(12);
                 String address = String.format("%s đường %s, phường %s, quận %s, tỉnh %s, nước %s", numberHouse, street, ward, district, province, country);
-                DetailCustomer tmp = new DetailCustomer(cusid, Image, firstname, lastname, email, phonenumber, address);
+                DetailCustomerDto tmp = new DetailCustomerDto(cusid, Image, firstname, lastname, email, phonenumber, address);
                 log.info("DetailCustomer " + tmp.toString());
                 ls.add(tmp);
             }
-            mView.addObject("detailCustomers", ls);
+            if (ls.isEmpty())
+                    mView.addObject("msg", "No Customer are available");
+            else
+                mView.addObject("detailCustomers", ls);
         } catch (Exception e)
         {
             log.warn("Exception:" + e);
@@ -291,7 +316,7 @@ public class AdminController
                 String district = rst.getString(10);
                 String province = rst.getString(11);
                 String country = rst.getString(12);
-                DetailCustomer tmp = new DetailCustomer(cusid, Image, firstname, lastname, email, phonenumber, numberHouse, street, ward, district, province, country);
+                DetailCustomerDto tmp = new DetailCustomerDto(cusid, Image, firstname, lastname, email, phonenumber, numberHouse, street, ward, district, province, country);
                 mView.addObject("detailCustomer", tmp);
             }
         } catch (Exception e)
@@ -302,6 +327,56 @@ public class AdminController
         return mView;
     }
 
+    
+
+    @RequestMapping(value = "/updating_customer/{id}", method = RequestMethod.POST)
+    public String updateCustomerProfile(@RequestParam("id") int cusid, @ModelAttribute DetailCustomerDto detailCustomerNew)
+    {
+        detailCustomerNew.setCusId(cusid + 0L);
+        log.info("Customer ID: " + cusid);
+        log.info("Updated Details: " + detailCustomerNew);
+        User updateUser = detailCustomerNew.getUser();
+        Address updateAddress = detailCustomerNew.getAddress();
+        Customer updateCustomer = detailCustomerNew.getCustomer();
+        customerService.save(updateUser, updateAddress, updateCustomer);
+        return "redirect:/admin/customers";
+    }
+    
+    
+    @GetMapping("/delete_customer/{id}")
+    public String deleteCustomer(@PathVariable("id") String customerId)
+    {
+        
+        try
+        {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3307/db_ecom2", "root", "12345678");
+            Long user_id = userService.getUserIdByCustomerID(Long.parseLong(customerId));            
+            String query1
+                    = "DELETE\n"
+                    + "FROM     user u\n"
+                    + "where	u.id = ?";
+            PreparedStatement stmt1 = con.prepareStatement(query1);
+            stmt1.setLong(1, user_id);
+            stmt1.executeUpdate();
+            
+            String query2
+                    = "DELETE\n"
+                    + "FROM     customer c\n"
+                    + "where	c.id = ?";
+            PreparedStatement stmt2 = con.prepareStatement(query2);
+            stmt2.setLong(1, Long.parseLong(customerId));
+            stmt2.executeUpdate();
+
+        } catch (Exception e)
+        {
+            log.warn("Exception:" + e);
+            System.out.println("Exception:" + e);
+        }
+        return "redirect:/admin/customers";
+    }
+    
+    //chua su dung den phan nay
     @GetMapping("profileDisplay")
     public String profileDisplay(Model model)
     {
@@ -352,17 +427,431 @@ public class AdminController
         System.out.println("Hello");
         return "updateProfile";
     }
+//----------------------------------Book-----------------------------------------------
+    @GetMapping("books")
+    public ModelAndView getBook() {
+            ModelAndView mView = new ModelAndView("books");
 
-    @RequestMapping(value = "/updating_customer/{id}", method = RequestMethod.POST)
-    public String updateCustomerProfile(@RequestParam("id") int cusid, @ModelAttribute DetailCustomer detailCustomerNew)
+            List<DetailBookDto> books = this.bookService.getAllDetailBookDto();
+
+            if (books.isEmpty()) {
+                    mView.addObject("msg", "No books are available");
+            } else {
+                    mView.addObject("books", books);
+            }
+            return mView;
+    }
+	
+	@GetMapping("/books/add")
+	public ModelAndView addBook() {
+		ModelAndView mView = new ModelAndView("addBook");
+		return mView;
+	}
+
+	@RequestMapping(value = "/books/adding",method=RequestMethod.POST)
+	public String addingBook (@ModelAttribute DetailBookDto detailBookDto) {
+            log.info("Add book: " + detailBookDto);
+            bookService.addNewBook(detailBookDto);
+            return "redirect:/admin/books";
+	}
+
+	@GetMapping("books/update_book/{id}")
+	public ModelAndView updateproduct(@PathVariable("id") Long id) {
+		
+		ModelAndView mView = new ModelAndView("updateBook");
+                DetailBookDto detailBookDto = bookService.getDetailBookDtoByBookId(id);		
+		mView.addObject("detailBook", detailBookDto);
+		return mView;
+	}
+	
+	@RequestMapping(value = "books/updating_book/{id}",method=RequestMethod.POST)
+	public String updateProduct(@ModelAttribute DetailBookDto detailBookDto)
+	{
+            log.info("Update book: " + detailBookDto);
+            bookService.updateBook(detailBookDto);
+            return "redirect:/admin/books";
+	}
+	
+	@GetMapping("books/delete_book/{id}")
+	public String removeProduct(@PathVariable("id") Long id)
+	{
+		bookService.deleteBook(id);
+		return "redirect:/admin/books";
+	}
+
+        
+//----------------------------------Clothes-----------------------------------------------
+    @GetMapping("clothes")
+    public ModelAndView getClothes() {
+            ModelAndView mView = new ModelAndView("clothes");
+
+            List<DetailClothesDto> clothes = this.clothesService.getAllDetailClothesDto();
+
+            if (clothes.isEmpty()) {
+                    mView.addObject("msg", "No clothes are available");
+            } else {
+                    mView.addObject("clothes", clothes);
+            }
+            return mView;
+    }
+	
+	@GetMapping("/clothes/add")
+	public ModelAndView addClothes() {
+		ModelAndView mView = new ModelAndView("addClothes");
+		return mView;
+	}
+
+	@RequestMapping(value = "/clothes/adding",method=RequestMethod.POST)
+	public String addingClothes (@ModelAttribute DetailClothesDto detailClothesDto) {
+            log.info("Add clothes: " + detailClothesDto);
+            clothesService.addNewClothes(detailClothesDto);
+            return "redirect:/admin/clothes";
+	}
+
+	@GetMapping("clothes/update_clothes/{id}")
+	public ModelAndView updateClothes(@PathVariable("id") Long id) {
+		
+		ModelAndView mView = new ModelAndView("updateClothes");
+                DetailClothesDto detailClothesDto = clothesService.getDetailClothesDtoByClothesId(id);		
+		mView.addObject("detailClothes", detailClothesDto);
+		return mView;
+	}
+	
+	@RequestMapping(value = "clothes/updating_clothes/{id}",method=RequestMethod.POST)
+	public String updateClothes(@ModelAttribute DetailClothesDto detailClothesDto)
+	{
+            log.info("Update clothes: " + detailClothesDto);
+            clothesService.updateClothes(detailClothesDto);
+            return "redirect:/admin/clothes";
+	}
+	
+	@GetMapping("clothes/delete_clothes/{id}")
+	public String removeClothes(@PathVariable("id") Long id)
+	{
+		clothesService.deleteClothes(id);
+		return "redirect:/admin/clothes";
+	}
+//----------------------------------Electronic-----------------------------------------------
+    @GetMapping("electronic")
+    public ModelAndView getElectronic() {
+            ModelAndView mView = new ModelAndView("electronic");
+
+            List<DetailElectronicDto> electronic = this.electronicService.getAllDetailElectronicDto();
+
+            if (electronic.isEmpty()) {
+                    mView.addObject("msg", "No electronic are available");
+            } else {
+                    mView.addObject("electronic", electronic);
+            }
+            return mView;
+    }
+	
+	@GetMapping("/electronic/add")
+	public ModelAndView addElectronic() {
+		ModelAndView mView = new ModelAndView("addElectronic");
+		return mView;
+	}
+
+	@RequestMapping(value = "/electronic/adding",method=RequestMethod.POST)
+	public String addingElectronic (@ModelAttribute DetailElectronicDto detailElectronicDto) {
+            log.info("Add electronic: " + detailElectronicDto);
+            electronicService.addNewElectronic(detailElectronicDto);
+            return "redirect:/admin/electronic";
+	}
+
+	@GetMapping("electronic/update_electronic/{id}")
+	public ModelAndView updateElectronic(@PathVariable("id") Long id) {
+		
+		ModelAndView mView = new ModelAndView("updateElectronic");
+                DetailElectronicDto detailElectronicDto = electronicService.getDetailElectronicDtoByElectronicId(id);		
+		mView.addObject("detailElectronic", detailElectronicDto);
+		return mView;
+	}
+	
+	@RequestMapping(value = "electronic/updating_electronic/{id}",method=RequestMethod.POST)
+	public String updateElectronic(@ModelAttribute DetailElectronicDto detailElectronicDto)
+	{
+            log.info("Update electronic: " + detailElectronicDto);
+            electronicService.updateElectronic(detailElectronicDto);
+            return "redirect:/admin/electronic";
+	}
+	
+	@GetMapping("electronic/delete_electronic/{id}")
+	public String removeElectronic(@PathVariable("id") Long id)
+	{
+		electronicService.deleteElectronic(id);
+		return "redirect:/admin/electronic";
+	}
+        
+//----------------------------------Laptop-----------------------------------------------
+    @GetMapping("laptop")
+    public ModelAndView getLaptop() {
+            ModelAndView mView = new ModelAndView("laptop");
+
+            List<DetailLaptopDto> laptop = this.laptopService.getAllDetailLaptopDto();
+
+            if (laptop.isEmpty()) {
+                    mView.addObject("msg", "No laptop are available");
+            } else {
+                    mView.addObject("laptop", laptop);
+            }
+            return mView;
+    }
+	
+	@GetMapping("/laptop/add")
+	public ModelAndView addLaptop() {
+		ModelAndView mView = new ModelAndView("addLaptop");
+		return mView;
+	}
+
+	@RequestMapping(value = "/laptop/adding",method=RequestMethod.POST)
+	public String addingLaptop (@ModelAttribute DetailLaptopDto detailLaptopDto) {
+            log.info("Add laptop: " + detailLaptopDto);
+            laptopService.addNewLaptop(detailLaptopDto);
+            return "redirect:/admin/laptop";
+	}
+
+	@GetMapping("laptop/update_laptop/{id}")
+	public ModelAndView updateLaptop(@PathVariable("id") Long id) {
+		
+		ModelAndView mView = new ModelAndView("updateLaptop");
+                DetailLaptopDto detailLaptopDto = laptopService.getDetailLaptopDtoByLaptopId(id);		
+		mView.addObject("detailLaptop", detailLaptopDto);
+		return mView;
+	}
+	
+	@RequestMapping(value = "laptop/updating_laptop/{id}",method=RequestMethod.POST)
+	public String updateLaptop(@ModelAttribute DetailLaptopDto detailLaptopDto)
+	{
+            log.info("Update laptop: " + detailLaptopDto);
+            laptopService.updateLaptop(detailLaptopDto);
+            return "redirect:/admin/laptop";
+	}
+	
+	@GetMapping("laptop/delete_laptop/{id}")
+	public String removeLaptop(@PathVariable("id") Long id)
+	{
+		laptopService.deleteLaptop(id);
+		return "redirect:/admin/laptop";
+	}
+        
+ //----------------------------------MobilePhone-----------------------------------------------
+    @GetMapping("mobilePhone")
+    public ModelAndView getMobilePhone() {
+            ModelAndView mView = new ModelAndView("mobilePhone");
+
+            List<DetailMobilePhoneDto> mobilePhone = this.mobilePhoneService.getAllDetailMobilePhoneDto();
+
+            if (mobilePhone.isEmpty()) {
+                    mView.addObject("msg", "No mobilePhone are available");
+            } else {
+                    mView.addObject("mobilePhone", mobilePhone);
+            }
+            return mView;
+    }
+	
+	@GetMapping("/mobilePhone/add")
+	public ModelAndView addMobilePhone() {
+		ModelAndView mView = new ModelAndView("addMobilePhone");
+		return mView;
+	}
+
+	@RequestMapping(value = "/mobilePhone/adding",method=RequestMethod.POST)
+	public String addingMobilePhone (@ModelAttribute DetailMobilePhoneDto detailMobilePhoneDto) {
+            log.info("Add mobilePhone: " + detailMobilePhoneDto);
+            mobilePhoneService.addNewMobilePhone(detailMobilePhoneDto);
+            return "redirect:/admin/mobilePhone";
+	}
+
+	@GetMapping("mobilePhone/update_mobilePhone/{id}")
+	public ModelAndView updateMobilePhone(@PathVariable("id") Long id) {
+		
+		ModelAndView mView = new ModelAndView("updateMobilePhone");
+                DetailMobilePhoneDto detailMobilePhoneDto = mobilePhoneService.getDetailMobilePhoneDtoByMobilePhoneId(id);		
+		mView.addObject("detailMobilePhone", detailMobilePhoneDto);
+		return mView;
+	}
+	
+	@RequestMapping(value = "mobilePhone/updating_mobilePhone/{id}",method=RequestMethod.POST)
+	public String updateMobilePhone(@ModelAttribute DetailMobilePhoneDto detailMobilePhoneDto)
+	{
+            log.info("Update mobilePhone: " + detailMobilePhoneDto);
+            mobilePhoneService.updateMobilePhone(detailMobilePhoneDto);
+            return "redirect:/admin/mobilePhone";
+	}
+	
+	@GetMapping("mobilePhone/delete_mobilePhone/{id}")
+	public String removeMobilePhone(@PathVariable("id") Long id)
+	{
+		mobilePhoneService.deleteMobilePhone(id);
+		return "redirect:/admin/mobilePhone";
+	}   
+        
+//----------------------------------Shoes-----------------------------------------------
+    @GetMapping("shoes")
+    public ModelAndView getShoes() {
+            ModelAndView mView = new ModelAndView("shoes");
+
+            List<DetailShoesDto> shoes = this.shoesService.getAllDetailShoesDto();
+
+            if (shoes.isEmpty()) {
+                    mView.addObject("msg", "No shoes are available");
+            } else {
+                    mView.addObject("shoes", shoes);
+            }
+            return mView;
+    }
+	
+	@GetMapping("/shoes/add")
+	public ModelAndView addShoes() {
+		ModelAndView mView = new ModelAndView("addShoes");
+		return mView;
+	}
+
+	@RequestMapping(value = "/shoes/adding",method=RequestMethod.POST)
+	public String addingShoes (@ModelAttribute DetailShoesDto detailShoesDto) {
+            log.info("Add shoes: " + detailShoesDto);
+            shoesService.addNewShoes(detailShoesDto);
+            return "redirect:/admin/shoes";
+	}
+
+	@GetMapping("shoes/update_shoes/{id}")
+	public ModelAndView updateShoes(@PathVariable("id") Long id) {
+		
+		ModelAndView mView = new ModelAndView("updateShoes");
+                DetailShoesDto detailShoesDto = shoesService.getDetailShoesDtoByShoesId(id);		
+		mView.addObject("detailShoes", detailShoesDto);
+		return mView;
+	}
+	
+	@RequestMapping(value = "shoes/updating_shoes/{id}",method=RequestMethod.POST)
+	public String updateShoes(@ModelAttribute DetailShoesDto detailShoesDto)
+	{
+            log.info("Update shoes: " + detailShoesDto);
+            shoesService.updateShoes(detailShoesDto);
+            return "redirect:/admin/shoes";
+	}
+	
+	@GetMapping("shoes/delete_shoes/{id}")
+	public String removeShoes(@PathVariable("id") Long id)
+	{
+		shoesService.deleteShoes(id);
+		return "redirect:/admin/shoes";
+	}        
+        
+        
+//        -------------Order-------------------
+        @GetMapping("/order")
+    public ModelAndView orderList()
     {
-        detailCustomerNew.setCusId(cusid + 0L);
-        log.info("Customer ID: " + cusid);
-        log.info("Updated Details: " + detailCustomerNew);
-        User updateUser = detailCustomerNew.getUser();
-        Address updateAddress = detailCustomerNew.getAddress();
-        Customer updateCustomer = detailCustomerNew.getCustomer();
-        customerService.save(updateUser, updateAddress, updateCustomer);
-        return "redirect:/admin/customers";
+        ModelAndView mView = new ModelAndView("orderListForAdmin");
+        
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        User currentUser = userService.getUserByEmail(email);
+        String name = currentUser.getFirstName() + " " + currentUser.getLastName();
+        Long UserId = currentUser.getId();
+        mView.addObject("username", name);
+//        mView.addObject("currentUserId", UserId);
+        
+        WrapperOrderListDto wrapper = orderService.getAllWrapperOrderListDto();
+        
+        mView.addObject("orders", wrapper);
+        
+        return mView;
+    }
+
+    
+    @GetMapping(value = "/processed_order/{orderId}")
+    public String confirmProcessedOrderByOrderId(@PathVariable("orderId") Long orderId)
+    {
+        orderService.setProcessedOrderByOrderId(orderId);
+        return "redirect:/admin/order";
+    }
+    
+    @GetMapping(value = "/paid_order/{orderId}")
+    public String confirmPaidOrderByOrderId(@PathVariable("orderId") Long orderId)
+    {
+        orderService.setPaidOrderByOrderId(orderId);
+        return "redirect:/admin/order";
+    }
+    
+    @GetMapping(value = "/admin/detail_order/{orderId}")
+    public String getDetailedOrderByOrderId(@PathVariable("orderId") Long orderId)
+    {
+        
+        return "redirect:/admin/detail_order/" + orderId;
+    }
+    
+ // ------------------- Detail_order-------------------------------
+    @GetMapping("/detail_order/{orderID}")
+    public ModelAndView orderList(@PathVariable("orderID") Long orderID)
+    {
+        ModelAndView mView = new ModelAndView("orderDetail");
+        
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        User currentUser = userService.getUserByEmail(email);
+        String name = currentUser.getFirstName() + " " + currentUser.getLastName();
+        Long UserId = currentUser.getId();
+        mView.addObject("username", name);
+//        mView.addObject("currentUserId", UserId);
+        //Can check them order nay co thuoc nguoi dung nay không?
+        //Se bo sung sau!!!!
+        OrderDto orderDto = orderService.getOrderDtoByOrderId(orderID);
+        if(orderDto != null)
+        {
+            mView.addObject("order", orderDto);
+            if((orderDto.getState().compareTo(OrderState.Received) != 0) && (orderDto.getState().compareTo(OrderState.Completed) != 0))
+            {
+                mView.addObject("isNotReceived", true);
+            }
+        }
+        
+        if(currentUser.getRole().compareTo(Role.ADMIN) == 0)
+        {
+            mView.addObject("isNotReceived", true);
+        }
+        
+        List<ItemDto> itemDtos = cartService.getListItemDtoByOrderId(orderID);
+
+        if (itemDtos.isEmpty())
+        {
+            mView.addObject("msg", "No products are available");
+        } else
+        {
+            mView.addObject("items", itemDtos);
+        }
+        
+        return mView;
+    }
+
+    
+    @GetMapping(value = "/detail_order/review/{orderId}/{itemId}")
+    public String reviewItemByOrderIdAndItemId(@PathVariable("orderId") Long orderId, @PathVariable("itemId") Long itemId)
+    {
+        
+        return "redirect:/admin/detail_order/";
+    }
+    
+    @GetMapping(value = "/detail_order/detail_item/{itemId}")
+    public String getDetailedItemByItemId(@PathVariable("itemId") Long itemId)
+    {
+        
+        return "redirect:/admin/detail_item/" + itemId;
+    }
+  
+//-------------------------------------Item detail--------------------------
+    @GetMapping("/detail_item/{itemId}")
+    public ModelAndView detail(@PathVariable("itemId") Long itemId)
+    {
+        ModelAndView mView = new ModelAndView("itemDetail");
+        
+        ItemDetailDto itemDetailDtos = itemService.getItemDetailDtoByItemId(itemId);
+        mView.addObject("item", itemDetailDtos);
+        
+        List<ReviewDto> lsReviewDto = reviewService.getListReviewDtoByItemId(itemId);
+        
+        mView.addObject("reviews",  lsReviewDto);
+        
+        return mView;
     }
 }

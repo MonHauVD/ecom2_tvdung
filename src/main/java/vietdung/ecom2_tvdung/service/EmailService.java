@@ -10,11 +10,12 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
 @Service
-public class EmailService {
+public class EmailService implements EmailDAO{
 
     @Autowired
     private JavaMailSender mailSender;
 
+    @Override
     public void sendEmail(String to, String subject, String body) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(to);
@@ -24,6 +25,7 @@ public class EmailService {
         mailSender.send(message);
     }
 
+    @Override
     public void sendResetPassword(String to, String resetPass, String thisEmail) {
         String body = "Click the link below to login with new pass\n"
                              + "http://http://localhost:8083/login\nNew pass: " + resetPass
@@ -37,6 +39,7 @@ public class EmailService {
         mailSender.send(message);
     }
 
+    @Override
     public void sendHtmlEmail() throws MessagingException {
         MimeMessage message = mailSender.createMimeMessage();
 

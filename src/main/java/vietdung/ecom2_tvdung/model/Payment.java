@@ -7,44 +7,99 @@ public class Payment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String method;
-    private String status;
+    private PaymentMethod method;
+    private PaymentStatus status;
+    private Double pretax, tax, total;
 
-    @ManyToOne
-    @JoinColumn(name = "order_id")
-    private Order order;
-
-    // Getters and Setters
-
-    public Long getId() {
+    public Payment()
+    {
+        this.status = PaymentStatus.unpaid;
+    }
+    
+    public Payment(PaymentMethod method, Double pretax)
+    {
+        this.status = PaymentStatus.unpaid;
+        this.method = method;
+        this.pretax = pretax;
+        this.tax = pretax*0.1;
+        this.total = pretax + tax;
+        
+    }
+    
+    public void calculatePayment()
+    {
+        if(pretax != null)
+        {
+            this.tax = pretax*0.1;
+            this.total = pretax + tax;
+        }
+    }
+    
+    public Long getId()
+    {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Long id)
+    {
         this.id = id;
     }
 
-    public String getMethod() {
+    public PaymentMethod getMethod()
+    {
         return method;
     }
 
-    public void setMethod(String method) {
+    public void setMethod(PaymentMethod method)
+    {
         this.method = method;
     }
 
-    public String getStatus() {
+    public PaymentStatus getStatus()
+    {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(PaymentStatus status)
+    {
         this.status = status;
     }
 
-    public Order getOrder() {
-        return order;
+    public Double getPretax()
+    {
+        return pretax;
     }
 
-    public void setOrder(Order order) {
-        this.order = order;
+    public void setPretax(Double pretax)
+    {
+        this.pretax = pretax;
     }
+
+    public Double getTax()
+    {
+        return tax;
+    }
+
+    public void setTax(Double tax)
+    {
+        this.tax = tax;
+    }
+
+    public Double getTotal()
+    {
+        return total;
+    }
+
+    public void setTotal(Double total)
+    {
+        this.total = total;
+    }
+
+    @Override
+    public String toString()
+    {
+        return "Payment{" + "id=" + id + ", method=" + method + ", status=" + status + ", pretax=" + pretax + ", tax=" + tax + ", total=" + total + '}';
+    }
+
+    
 }

@@ -5,6 +5,7 @@
 package vietdung.ecom2_tvdung.service;
 
 import java.util.List;
+import vietdung.ecom2_tvdung.controller.dto.DetailBookDto;
 import vietdung.ecom2_tvdung.model.Book;
 
 /**
@@ -12,7 +13,12 @@ import vietdung.ecom2_tvdung.model.Book;
  * @author TranVietDung
  */
 public interface BookDAO {
-    Book addNewBook(String name, double price, int quantity, String producer, String description, String author, int numberPage);
+    Book addNewBook(DetailBookDto detailBookDto);
+    Book getBookByBookId(Long BookId);
+    DetailBookDto getDetailBookDtoByBookId(Long BookId);
+    List<DetailBookDto> getAllDetailBookDto();
+    void updateBook(DetailBookDto detailBookDto);
+    void deleteBook(Long BookId);
     List<Book> getAllBooks();
 }
 

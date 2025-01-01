@@ -17,7 +17,7 @@
 	integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
 	crossorigin="anonymous">
 
-<title>Document</title>
+<title>Product</title>
 </head>
 <body class="bg-light">
 	<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -38,7 +38,8 @@
 				<ul class="navbar-nav">
 					<li class="nav-item active"><a class="nav-link" href="Dashboard">Home
 							Page</a></li>
-					<li class="nav-item active"><form th:action="@{/admin/logout}" method="post">
+					<li class="nav-item active"><form action="/admin/logout" method="post">
+                                                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                                                 <input type="submit" value="Logout" />
                                             </form>
 					</li>

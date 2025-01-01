@@ -8,54 +8,119 @@ package vietdung.ecom2_tvdung.service;
  *
  * @author TranVietDung
  */
+import java.util.ArrayList;
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import vietdung.ecom2_tvdung.model.Book;
-import vietdung.ecom2_tvdung.model.Item;
-import vietdung.ecom2_tvdung.repository.BookRepository;
-import vietdung.ecom2_tvdung.repository.ItemRepository;
+import vietdung.ecom2_tvdung.controller.dto.DetailElectronicDto;
+import vietdung.ecom2_tvdung.model.*;
+import vietdung.ecom2_tvdung.repository.*;
 
 @Service
-public class BookDAOImpl implements BookDAO{
+@Slf4j
+public class ElectronicDAOImpl implements ElectronicDAO{
 
     @Autowired
-    private BookRepository bookRepository;
+    private ElectronicRepository electronicRepository;
 
     @Autowired
     private ItemRepository itemRepository;
 
-    @Transactional
-    public Book addNewBook(String name, double price, int quantity, String producer, String description, String author, int numberPage) {
-        // Step 1: Create and save a new Item
-        Item item = new Item();
-        item.setName(name);
-        item.setPrice(price);
-        item.setQuantity(quantity);
-        item.setProducer(producer);
-        item.setDescription(description);
+    
+    @Override
+    public Electronic addNewElectronic(DetailElectronicDto detailElectronicDto) {
+        String Image = detailElectronicDto.getImage();
+        if(Image.length() == 0)
+        {
+            Image = "../images/origin/electronic.png";
+        }
+        Item item = new Item(detailElectronicDto.getName(), detailElectronicDto.getPrice(), detailElectronicDto.getQuantity(), detailElectronicDto.getProducer(), Catalog.electronic, Image, detailElectronicDto.getDescription());
+        item = itemRepository.save(item); 
+        
+        Electronic electronic = new Electronic(detailElectronicDto.getModel(), detailElectronicDto.getTypeOfMachine(), detailElectronicDto.getWeight(), detailElectronicDto.getDimensions());
+        electronic.setItem(item);
 
-        item = itemRepository.save(item); // Save item to generate id and idItem
-
-        // Step 2: Create and save the new Book with the idItem from the saved Item
-        Book book = new Book();
-        book.setIdItem(item.getId()); // Save Item's id as idItem in Book
-        book.setName(name);
-        book.setPrice(price);
-        book.setQuantity(quantity);
-        book.setProducer(producer);
-        book.setDescription(description);
-        book.setAuthor(author);
-        book.setNumberPage(numberPage);
-
-        return bookRepository.save(book);
+        return electronicRepository.save(electronic);
     }
-
-    public List<Book> getAllBooks()
+    
+    
+    @Override
+    public Electronic getElectronicByElectronicId(Long ElectronicId)
     {
-        return bookRepository.findAll();
+//        Long item_id = itemRepository.getItemIdByElectronicID(ElectronicId);
+//        Item item = itemRepository.findItemById(item_id);
+        
+        Electronic electronic = electronicRepository.getById(ElectronicId);
+        return electronic;
     }
+    
+    
+    @Override
+    public DetailElectronicDto getDetailElectronicDtoByElectronicId(Long ElectronicId)
+    {
+        Long item_id = itemRepository.getItemIdByElectronicID(ElectronicId);
+        Item item = itemRepository.getById(item_id);
+        Electronic electronic = electronicRepository.getById(ElectronicId);
+        return new DetailElectronicDto(electronic, item);
+    }
+    
+    
+    @Override
+    public List<Electronic> getAllElectronics()
+    {
+        return electronicRepository.findAll();
+    }
+    
+    
+    @Override
+    public List<DetailElectronicDto> getAllDetailElectronicDto()
+    {
+        List<DetailElectronicDto> ls = new ArrayList<>();
+        List <Electronic> lsElectronic = electronicRepository.findAll();
+        for(Electronic thisElectronic : lsElectronic)
+        {
+            Long item_id = itemRepository.getItemIdByElectronicID(thisElectronic.getId());
+            Item thisItem = itemRepository.getById(item_id);
+            ls.add(new DetailElectronicDto(thisElectronic, thisItem));
+        }
+        
+        return ls;
+    }
+
+    
+    @Override
+    public void updateElectronic(DetailElectronicDto detailElectronicDto)
+    {
+        Long item_id = itemRepository.getItemIdByElectronicID(detailElectronicDto.getElectronicId());
+        Item oldItem = itemRepository.getById(item_id);
+        Item item = new Item(detailElectronicDto.getName(), detailElectronicDto.getPrice(), detailElectronicDto.getQuantity(), detailElectronicDto.getProducer(), Catalog.electronic, detailElectronicDto.getImage(), detailElectronicDto.getDescription());
+        item.setId(item_id);
+        item.setCatalog(Catalog.electronic);
+        if(detailElectronicDto.getImage().length() == 0)
+        {
+            item.setImage(oldItem.getImage());
+        }
+        
+        itemRepository.save(item);
+        
+        Electronic electronic = new Electronic(detailElectronicDto.getElectronicId(), detailElectronicDto.getModel(), detailElectronicDto.getTypeOfMachine(), detailElectronicDto.getWeight(), detailElectronicDto.getDimensions(), item);
+        
+        electronicRepository.save(electronic);
+    }
+
+    
+    @Override
+    public void deleteElectronic(Long ElectronicId)
+    {
+        Long item_id = itemRepository.getItemIdByElectronicID(ElectronicId);
+        Electronic electronic = electronicRepository.getById(ElectronicId);
+        Item item = itemRepository.getById(item_id);
+        electronicRepository.delete(electronic);
+        itemRepository.delete(item);
+    }
+    
     
     
 }

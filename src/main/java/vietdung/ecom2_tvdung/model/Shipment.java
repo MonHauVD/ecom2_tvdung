@@ -7,44 +7,109 @@ public class Shipment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String method;
-    private String status;
+    private ShipmentMethod method;
+    private String customerAddress;
+    private Double distance;
+    
+    private final Double pricePerKm = 1000.0;
+    private final String addressOfThisShop = "Km10, Nguyễn Trãi, Hà Đông, Hà Nội";
 
-    @ManyToOne
-    @JoinColumn(name = "order_id")
-    private Order order;
+    
+    public Shipment()
+    {
+    }
 
-    // Getters and Setters
+    public Shipment(String customerAddress)
+    {
+        this.customerAddress = customerAddress;
+    }
 
-    public Long getId() {
+    
+    
+    public Shipment(ShipmentMethod method, String customerAddress)
+    {
+        this.method = method;
+        this.customerAddress = customerAddress;
+        this.distance = calculateDistance();
+    }
+    
+    public Double calculateDistance()
+    {
+        double randomValue = 1 + (Math.random() * (50 - 1));
+        return randomValue;
+    }
+    
+    public Double calculateFeeShip()
+    {
+        if (this.distance == null)
+        {
+            this.distance = calculateDistance();
+        }
+        Double base = this.distance * this.pricePerKm;
+        if (method == null)
+        {
+            base = null;
+        }
+        else if (method.equals(ShipmentMethod.Motorcycle))
+        {
+            base *= 1;
+        }
+        else if (method.equals(ShipmentMethod.Car))
+        {
+            base *= 1.5;
+        }
+        else if (method.equals(ShipmentMethod.Drone))
+        {
+            base *= 2;
+        }
+        return base;
+    }
+
+    public Long getId()
+    {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Long id)
+    {
         this.id = id;
     }
 
-    public String getMethod() {
+    public ShipmentMethod getMethod()
+    {
         return method;
     }
 
-    public void setMethod(String method) {
+    public void setMethod(ShipmentMethod method)
+    {
         this.method = method;
     }
 
-    public String getStatus() {
-        return status;
+    public String getCustomerAddress()
+    {
+        return customerAddress;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setCustomerAddress(String customerAddress)
+    {
+        this.customerAddress = customerAddress;
     }
 
-    public Order getOrder() {
-        return order;
+    public Double getDistance()
+    {
+        return distance;
     }
 
-    public void setOrder(Order order) {
-        this.order = order;
+    public void setDistance(Double distance)
+    {
+        this.distance = distance;
     }
+
+    @Override
+    public String toString()
+    {
+        return "Shipment{" + "id=" + id + ", method=" + method + ", customerAddress=" + customerAddress + ", distance=" + distance + ", pricePerKm=" + pricePerKm + ", addressOfThisShop=" + addressOfThisShop + '}';
+    }
+
+    
 }

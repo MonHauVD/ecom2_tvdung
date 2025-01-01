@@ -2,15 +2,18 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package vietdung.ecom2_tvdung.model;
+package vietdung.ecom2_tvdung.controller.dto;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import vietdung.ecom2_tvdung.model.Address;
+import vietdung.ecom2_tvdung.model.Customer;
+import vietdung.ecom2_tvdung.model.User;
 
 /**
  *
  * @author TranVietDung
  */
-public class DetailCustomer
+public class DetailCustomerDto
 {
 
     private Long cusId;
@@ -24,11 +27,11 @@ public class DetailCustomer
     private String country;
     
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-    public DetailCustomer()
+    public DetailCustomerDto()
     {
     }
 
-    public DetailCustomer(Long cusId, String image, String firstName, String lastName, String email, String phoneNumber, String strAddress)
+    public DetailCustomerDto(Long cusId, String image, String firstName, String lastName, String email, String phoneNumber, String strAddress)
     {
         this.cusId = cusId;
         this.image = image;
@@ -41,7 +44,7 @@ public class DetailCustomer
 
    
 
-     public DetailCustomer(Long cusId, String image, String firstName, String lastName, String email, String phoneNumber,  String number, String street, String ward, String district, String province, String country)
+     public DetailCustomerDto(Long cusId, String image, String firstName, String lastName, String email, String phoneNumber,  String number, String street, String ward, String district, String province, String country)
     {
         this.cusId = cusId;
         this.image = image;
@@ -58,7 +61,7 @@ public class DetailCustomer
     }
 
 
-    public DetailCustomer(Long cusId, String image, String firstName, String lastName, String email, String phoneNumber, String password, String number, String street, String ward, String district, String province, String country)
+    public DetailCustomerDto(Long cusId, String image, String firstName, String lastName, String email, String phoneNumber, String password, String number, String street, String ward, String district, String province, String country)
     {
         this.cusId = cusId;
         this.image = image;

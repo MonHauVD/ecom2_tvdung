@@ -3,7 +3,7 @@
 <%@page import="java.text.*"%>
 <%@page import ="java.io.FileOutputStream" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-
+<%@ page pageEncoding="UTF-8" %>
 <%@page import=" java.io.ObjectOutputStream" %>
 <!doctype html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
@@ -17,7 +17,7 @@
 	integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
 	crossorigin="anonymous">
 
-<title>Document</title>
+<title>Shoes</title>
 </head>
 <body class="bg-light">
 	<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -38,7 +38,8 @@
 				<ul class="navbar-nav">
 					<li class="nav-item active"><a class="nav-link" href="Dashboard">Home
 							Page</a></li>
-					<li class="nav-item active"><form th:action="@{/admin/logout}" method="post">
+					<li class="nav-item active"><form action="/admin/logout" method="post">
+                                                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                                                 <input type="submit" value="Logout" />
                                             </form>
 					</li>
@@ -51,64 +52,75 @@
 	<div class="container-fluid">
 
 		<a style="margin: 20px 0" class="btn btn-primary"
-			href="/admin/products/add">Add Product</a><br>
+			href="/admin/shoes/add">Add shoes</a><br>
 		<table class="table">
 
 			<tr>
+                                <th scope="col">Image</th>
 				<th scope="col">Serial No.</th>
-				<th scope="col">Product Name</th>
-				<th scope="col">Category</th>
-				<th scope="col">Preview</th>
-				<th scope="col">Quantity</th>
+                                <th scope="col">Item Name</th>
 				<th scope="col">Price</th>
-				<th scope="col">Weight</th>
+				<th scope="col">Quantity</th>
+				<th scope="col">Producer</th>
 				<th scope="col">Descrption</th>
+                                
+                                <th scope="col">Size</th>
+                                <th scope="col">Color</th>
+                                <th scope="col">Type</th>
+                                <th scope="col">Gender</th>
+                                
 				<th scope="col">Delete</th>
 				<th scope="col">Update</th>
 			</tr>
 			<tbody>
-
-				<c:forEach var="product" items="${products}">
+                                <h3 class="text-center text-danger mt-3">${msg}</h3>
+				<c:forEach var="shoes" items="${shoes}">
 				<tr>
-
-
-
 					<td>
-						${product.id}
-					</td>
-					<td>
-						${product.name }
-					</td>
-					<td>
-						${product.category.name}
-
-					</td>
-
-					<td><img src="${product.image}"
-						height="100px" width="100px"></td>
-					<td>
-						${product.quantity }
-					</td>
-					<td>S
-						${product.price }
-					</td>
-					<td>
-						${product.weight }
-					</td>
-					<td>
-						${product.description }
-					</td>
+                                            <img src="${shoes.image}"
+						height="100px" width="100px">
+                                        </td>
 
 					<td>
-					<form action="products/delete" method="get">
-							<input type="hidden" name="id" value="${product.id}">
-							<input type="submit" value="Delete" class="btn btn-danger">
-					</form>
+						${shoes.shoesId}
 					</td>
 					<td>
-					<form action="products/update/${product.id}" method="get">
-                        <input type="submit" value="Update" class="btn btn-warning">
-                    </form>
+						${shoes.name}
+					</td>
+					<td>
+						${shoes.price}
+
+					</td>
+                                        <td>
+						${shoes.quantity}
+					</td>
+                                        <td>
+						${shoes.producer}
+					</td>
+                                        
+					<td>
+						${shoes.description }
+					</td>
+                                        
+					<td>
+						${shoes.size}
+					</td>
+					<td>
+						${shoes.color}
+					</td>
+                                        <td>
+						${shoes.type}
+					</td>
+                                        <td>
+						${shoes.gender}
+					</td>
+
+					<td>
+                                            <a class="nav-link" href="shoes/delete_shoes/${shoes.shoesId}" >Delete</a>
+                                        </td>
+                                        <td>
+                                            <a class="nav-link" href="shoes/update_shoes/${shoes.shoesId}" >Update</a>
+                                        </td>
 
 					</td>
 
